@@ -1,0 +1,52 @@
+{
+	"name": "pl_delete",
+	"properties": {
+		"activities": [
+			{
+				"name": "DeleteActivity",
+				"type": "Delete",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "deletereason",
+						"value": "testing"
+					}
+				],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_population_raw_gz",
+						"type": "DatasetReference"
+					},
+					"logStorageSettings": {
+						"linkedServiceName": {
+							"referenceName": "ls_adls_covidreportingdl",
+							"type": "LinkedServiceReference"
+						},
+						"path": "log"
+					},
+					"enableLogging": true,
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"fileListPath": "practise",
+						"enablePartitionDiscovery": false
+					}
+				}
+			}
+		],
+		"parameters": {
+			"filename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-07-25T09:52:04Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,27 @@
+{
+	"name": "pl_validation",
+	"properties": {
+		"activities": [
+			{
+				"name": "Validation1",
+				"type": "Validation",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_adls_population_raw_tz",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "input000.txt"
+						}
+					},
+					"timeout": "7.00:00:00",
+					"sleep": 10
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2021-07-21T11:35:16Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,42 @@
+{
+	"name": "Aggregate_join_dataflow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_blob_practise",
+						"type": "DatasetReference"
+					},
+					"name": "source"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_blob_productCategory",
+						"type": "DatasetReference"
+					},
+					"name": "sourceCategory"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_population_raw_gz",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Aggregate"
+				},
+				{
+					"name": "Joincategory"
+				}
+			],
+			"script": "source(output(\n\t\tProductID as string,\n\t\tName as string,\n\t\tProductNumber as string,\n\t\tColor as string,\n\t\tStandardCost as string,\n\t\tListPrice as integer,\n\t\tSize as string,\n\t\tWeight as string,\n\t\tProductCategoryID as string,\n\t\tProductModelID as string,\n\t\tSellStartDate as date,\n\t\tSellEndDate as date,\n\t\tModifiedDate as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpartitionBy('hash', 1)) ~> source\nsource(output(\n\t\tProductCategoryID as string,\n\t\tParentProductCategoryID as string,\n\t\tName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['ProductCategory.csv'],\n\tpartitionBy('hash', 1)) ~> sourceCategory\nsource aggregate(groupBy(Color,\n\t\tProductName = Name,\n\t\tCategory = ProductCategoryID),\n\tListPrice = avg(ListPrice),\n\tpartitionBy('hash', 1)) ~> Aggregate\nAggregate, sourceCategory join(Category == ProductCategoryID,\n\tjoinType:'inner',\n\tpartitionBy('hash', 1),\n\tbroadcast: 'auto')~> Joincategory\nJoincategory sink(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tpartitionFileNames:['AggregateJoin.csv'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\tColor,\n\t\tProductName,\n\t\tCategory,\n\t\tListPrice,\n\t\tName\n\t),\n\tpartitionBy('hash', 1)) ~> sink1"
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"name": "pl_execute",
+	"properties": {
+		"activities": [
+			{
+				"name": "Execute Pipeline",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_incrementalcopy",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2021-07-22T13:17:01Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,9 @@
+{
+	"name": "practiseAsh",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "5dbf79db-a20b-476e-948c-eb938ef0abd2",
+		"tenantId": "4e700317-adae-4379-9226-883ce726d7a6"
+	}
+}

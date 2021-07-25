@@ -1,0 +1,32 @@
+{
+	"name": "Aggregate_dataflow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_blob_practise",
+						"type": "DatasetReference"
+					},
+					"name": "source"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_population_raw_gz",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Aggregate"
+				}
+			],
+			"script": "source(output(\n\t\tProductID as string,\n\t\tName as string,\n\t\tProductNumber as string,\n\t\tColor as string,\n\t\tStandardCost as string,\n\t\tListPrice as integer,\n\t\tSize as string,\n\t\tWeight as string,\n\t\tProductCategoryID as string,\n\t\tProductModelID as string,\n\t\tSellStartDate as date,\n\t\tSellEndDate as date,\n\t\tModifiedDate as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpartitionBy('hash', 1)) ~> source\nsource aggregate(groupBy(Color,\n\t\tProductName = Name),\n\tListPrice = avg(ListPrice),\n\tpartitionBy('hash', 1)) ~> Aggregate\nAggregate sink(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tpartitionFileNames:['Aggregate.csv'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\tColor,\n\t\tProductName,\n\t\tListPrice\n\t),\n\tpartitionBy('hash', 1)) ~> sink1"
+		}
+	}
+}

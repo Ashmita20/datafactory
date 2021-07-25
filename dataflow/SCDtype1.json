@@ -1,0 +1,32 @@
+{
+	"name": "SCDtype1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_scdtype1",
+						"type": "DatasetReference"
+					},
+					"name": "source"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ls_azuresql_newwatermark",
+						"type": "DatasetReference"
+					},
+					"name": "sinksql"
+				}
+			],
+			"transformations": [
+				{
+					"name": "AlterRow"
+				}
+			],
+			"script": "source(output(\n\t\tPersonID as string,\n\t\tName as string,\n\t\tLastModifytime as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpartitionBy('hash', 1)) ~> source\nsource alterRow(updateIf(1==1),\n\tpartitionBy('hash', 1)) ~> AlterRow\nAlterRow sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tPersonID as integer,\n\t\tName as string,\n\t\tLastModifytime as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['PersonID'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tPersonID,\n\t\tName,\n\t\tLastModifytime\n\t),\n\tpartitionBy('hash', 1)) ~> sinksql"
+		}
+	}
+}

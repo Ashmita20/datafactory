@@ -18,6 +18,10 @@
 					"dataflow": {
 						"referenceName": "exists_dataflow",
 						"type": "DataFlowReference",
+						"parameters": {
+							"department": "1",
+							"dept_id": "1"
+						},
 						"datasetParameters": {
 							"source1": {
 								"fileName": "emp.csv"

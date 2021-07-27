@@ -23,7 +23,7 @@
 								"fileName": "emp.csv"
 							},
 							"source2": {
-								"tableName": "emp.csv"
+								"tableName": "emp_dept"
 							},
 							"sink1": {
 								"tableName": "emp_dept"

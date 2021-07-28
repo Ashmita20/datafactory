@@ -12,6 +12,11 @@
 				}
 			}
 		],
+		"parameters": {
+			"waitime": {
+				"type": "string"
+			}
+		},
 		"variables": {
 			"waittime": {
 				"type": "String"

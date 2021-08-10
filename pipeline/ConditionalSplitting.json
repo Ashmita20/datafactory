@@ -24,6 +24,9 @@
 							},
 							"HRSQLtable": {
 								"tableName": "hr_employee"
+							},
+							"PayrollSink": {
+								"tableName": "payroll_employee"
 							}
 						}
 					},

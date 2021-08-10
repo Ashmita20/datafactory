@@ -22,6 +22,9 @@
 							"AllEmployee": {
 								"fileName": "emp.csv"
 							},
+							"dept": {
+								"fileName": "dept.csv"
+							},
 							"HRSQLtable": {
 								"tableName": "hr_employee"
 							},

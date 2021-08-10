@@ -10,6 +10,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "AllEmployee"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_common",
+						"type": "DatasetReference"
+					},
+					"name": "dept"
 				}
 			],
 			"sinks": [
@@ -31,9 +38,12 @@
 			"transformations": [
 				{
 					"name": "ConditionalSplit1"
+				},
+				{
+					"name": "Join1"
 				}
 			],
-			"script": "source(output(\n\t\temp_id as short,\n\t\tName as string,\n\t\tdepartment as string,\n\t\tcountry as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['emp.csv']) ~> AllEmployee\nAllEmployee split(equals(department,'1'),\n\tequals(department,'2'),\n\tequals(department,'3'),\n\tequals(department,'4'),\n\tdisjoint: false) ~> ConditionalSplit1@(HREmployees, Payroll, Finance, IT, Admin)\nConditionalSplit1@HREmployees sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\temp_id,\n\t\tName,\n\t\tdepartment,\n\t\tcountry\n\t),\n\tpartitionBy('hash', 1)) ~> HRSQLtable\nConditionalSplit1@Payroll sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\temp_id,\n\t\tName,\n\t\tdepartment,\n\t\tcountry\n\t),\n\tpartitionBy('hash', 1)) ~> PayrollSink"
+			"script": "source(output(\n\t\temp_id as short,\n\t\tName as string,\n\t\tdepartment as string,\n\t\tcountry as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['emp.csv']) ~> AllEmployee\nsource(output(\n\t\tdeptid as string,\n\t\tdeptname as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['dept.csv']) ~> dept\nJoin1 split(equals(department,'1'),\n\tequals(department,'2'),\n\tequals(department,'3'),\n\tequals(department,'4'),\n\tdisjoint: false) ~> ConditionalSplit1@(HREmployees, Payroll, Finance, IT, Admin)\nAllEmployee, dept join(department == deptid,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join1\nConditionalSplit1@HREmployees sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:['alter table hr_employee add deptname varchar;'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\temp_id,\n\t\tName,\n\t\tdepartment,\n\t\tcountry,\n\t\tdeptname\n\t),\n\tpartitionBy('hash', 1)) ~> HRSQLtable\nConditionalSplit1@Payroll sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\temp_id,\n\t\tName,\n\t\tdepartment,\n\t\tcountry,\n\t\tdeptname\n\t),\n\tpartitionBy('hash', 1)) ~> PayrollSink"
 		}
 	}
 }

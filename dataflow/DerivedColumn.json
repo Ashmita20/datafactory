@@ -26,7 +26,7 @@
 					"name": "DerivedCountry"
 				}
 			],
-			"script": "source(output(\n\t\temp_id as short,\n\t\tName as string,\n\t\tcountry as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select emp_id,Name,country from emp_dept where department = \\'1\\'',\n\tformat: 'query',\n\twildcardPaths:['emp.csv'],\n\tpartitionBy('hash', 1)) ~> employee\nemployee derive(country = iif(isNull(country),'Unknown',upper(country)),\n\tpartitionBy('hash', 1)) ~> DerivedCountry\nDerivedCountry sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\temp_id,\n\t\tName,\n\t\tcountry\n\t)) ~> empdata"
+			"script": "source(output(\n\t\temp_id as short,\n\t\tName as string,\n\t\tcountry as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select emp_id,Name,country from emp_dept where department = \\'1\\'',\n\tformat: 'query',\n\twildcardPaths:['emp.csv'],\n\tpartitionBy('hash', 1)) ~> employee\nemployee derive(country = iif(isNull(country),'Unknown',upper(country)),\n\tpartitionBy('hash', 1)) ~> DerivedCountry\nDerivedCountry sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['emp_data'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\temp_id,\n\t\tName,\n\t\tcountry\n\t)) ~> empdata"
 		}
 	}
 }

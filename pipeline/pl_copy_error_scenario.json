@@ -1,6 +1,91 @@
 {
 	"name": "pl_copy_error_scenario",
 	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "deptid",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "dept_id",
+									"type": "Int16",
+									"physicalType": "smallint"
+								}
+							},
+							{
+								"source": {
+									"name": "deptname",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "deptname",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_common",
+						"type": "DatasetReference",
+						"parameters": {
+							"fileName": "dept.csv"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_sql_common",
+						"type": "DatasetReference",
+						"parameters": {
+							"tableName": "dept"
+						}
+					}
+				]
+			}
+		],
 		"annotations": []
 	}
 }

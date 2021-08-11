@@ -1,0 +1,64 @@
+{
+	"name": "SCDtype2",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_common",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_sql_common",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_common",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_sql_common",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DerivedColumn1"
+				},
+				{
+					"name": "Select1"
+				},
+				{
+					"name": "Lookup1"
+				},
+				{
+					"name": "Filter1"
+				},
+				{
+					"name": "AlterRow1"
+				},
+				{
+					"name": "Select2"
+				},
+				{
+					"name": "DerivedColumn2"
+				}
+			],
+			"script": "source(output(\n\t\temp_id as short,\n\t\tName as string,\n\t\tdepartment as short,\n\t\tcountry as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['emp.csv']) ~> source1\nsource(output(\n\t\temp_id as short,\n\t\tName as string,\n\t\tdepartment as short,\n\t\tcountry as string,\n\t\tisActive as string,\n\t\tsurrogate_key as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> source2\nsource1 derive(isActive = 1) ~> DerivedColumn1\nsource2 select(mapColumn(\n\t\t{sql.emp_id} = emp_id,\n\t\t{sql.Name} = Name,\n\t\t{sql.department} = department,\n\t\t{sql.country} = country,\n\t\t{sql.isActive} = isActive,\n\t\t{sql.surrogate_key} = surrogate_key\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nsource1, Select1 lookup(emp_id == {sql.emp_id},\n\tmultiple: true,\n\tbroadcast: 'auto')~> Lookup1\nLookup1 filter(!isNull({sql.emp_id})) ~> Filter1\nDerivedColumn2 alterRow(updateIf(1==1)) ~> AlterRow1\nFilter1 select(mapColumn(\n\t\t{sql.emp_id},\n\t\t{sql.Name},\n\t\t{sql.department},\n\t\t{sql.country},\n\t\t{sql.isActive},\n\t\t{sql.surrogate_key}\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect2 derive({sql.isActive} = 0) ~> DerivedColumn2\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['surrogate_key'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\temp_id = {sql.emp_id},\n\t\tName = {sql.Name},\n\t\tdepartment = {sql.department},\n\t\tcountry = {sql.country},\n\t\tisActive = {sql.isActive},\n\t\tsurrogate_key = {sql.surrogate_key}\n\t),\n\tpartitionBy('hash', 1)) ~> sink1\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\temp_id,\n\t\tName,\n\t\tdepartment,\n\t\tcountry,\n\t\tisActive\n\t)) ~> sink2"
+		}
+	}
+}

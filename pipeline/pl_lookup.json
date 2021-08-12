@@ -17,7 +17,10 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "Lookup_dataflow",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"SinkFileName": "lookup.csv"
+						}
 					},
 					"compute": {
 						"coreCount": 8,

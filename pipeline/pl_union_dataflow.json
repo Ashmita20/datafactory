@@ -1,5 +1,5 @@
 {
-	"name": "ExistDataFlow",
+	"name": "pl_union_dataflow",
 	"properties": {
 		"activities": [
 			{
@@ -15,6 +15,15 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Uniondataflow",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"sinknewTable": {
+								"tableName": "UnionProduct"
+							}
+						}
+					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"

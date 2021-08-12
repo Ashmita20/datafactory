@@ -17,13 +17,7 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "Lookup_dataflow",
-						"type": "DataFlowReference",
-						"parameters": {
-							"parameter1": {
-								"value": "@pipeline().Pipeline",
-								"type": "Expression"
-							}
-						}
+						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,

@@ -1,0 +1,9 @@
+{
+	"name": "test-daf",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "30904121-53a3-439f-b20c-b07606516e11",
+		"tenantId": "4e700317-adae-4379-9226-883ce726d7a6"
+	}
+}

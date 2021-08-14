@@ -12,9 +12,28 @@
 					"name": "emp"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
-			"script": "source(output(\n\t\temp_id as string,\n\t\tName as string,\n\t\tdepartment as string,\n\t\tcountry as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> emp"
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_trial",
+						"type": "DatasetReference"
+					},
+					"name": "invalidemp"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_sql_trial",
+						"type": "DatasetReference"
+					},
+					"name": "validemp"
+				}
+			],
+			"transformations": [
+				{
+					"name": "ConditionalSplit1"
+				}
+			],
+			"script": "source(output(\n\t\temp_id as string,\n\t\tName as string,\n\t\tdepartment as string,\n\t\tcountry as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> emp\nemp split(isNull(toInteger(emp_id)),\n\tdisjoint: false) ~> ConditionalSplit1@(invalidEmp, empid)\nConditionalSplit1@invalidEmp sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\trecreate:true,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\temp_id,\n\t\tName,\n\t\tdepartment,\n\t\tcountry\n\t)) ~> invalidemp\nConditionalSplit1@empid sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\trecreate:true,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\temp_id,\n\t\tName,\n\t\tdepartment,\n\t\tcountry\n\t)) ~> validemp"
 		}
 	}
 }

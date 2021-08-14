@@ -12,13 +12,21 @@
 					"name": "empsource"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_trial",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "Pivot1"
 				}
 			],
-			"script": "source(output(\n\t\temp_id as string,\n\t\tName as string,\n\t\tdepartment as string,\n\t\tcountry as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> empsource\nempsource pivot(groupBy(department),\n\tpivotBy(country),\n\t{} = count(emp_id),\n\tcolumnNaming: '$N$V',\n\tlateral: false) ~> Pivot1"
+			"script": "source(output(\n\t\temp_id as string,\n\t\tName as string,\n\t\tdepartment as string,\n\t\tcountry as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> empsource\nempsource pivot(groupBy(department),\n\tpivotBy(country),\n\t{} = count(emp_id),\n\tcolumnNaming: '$N$V',\n\tlateral: false) ~> Pivot1\nPivot1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\trecreate:true,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tdepartment\n\t)) ~> sink1"
 		}
 	}
 }

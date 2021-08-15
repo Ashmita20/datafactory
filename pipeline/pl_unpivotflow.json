@@ -57,7 +57,7 @@
 						"Content-Type": "application/json"
 					},
 					"body": {
-						"value": "{\n\"pipeline\":\"@{pipeline().Pipeline}\",\n\"DataFactoryName\":\"@{pipeline().DataFactory}\",\n\"RunId\":\"@{pipeline().RunId}\",\n\"Error\":\"@{activity('Data flow1').Error.Message}\"\n}",
+						"value": "{\n\"pipeline\":\"@{pipeline().Pipeline}\",\n\"DataFactoryName\":\"@{pipeline().DataFactory}\",\n\"RunId\":\"@{pipeline().RunId}\",\n\"Error\":\"@{activity('Data flow1')}\"\n}",
 						"type": "Expression"
 					}
 				}

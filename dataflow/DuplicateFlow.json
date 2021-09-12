@@ -1,0 +1,35 @@
+{
+	"name": "DuplicateFlow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_datalake_dept",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_trial",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Aggregate1"
+				},
+				{
+					"name": "AlterRow1"
+				}
+			],
+			"script": "source(output(\n\t\tdeptid as string,\n\t\tdeptname as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource1 aggregate(groupBy(deptid,\n\t\tdeptname),\n\tcount = greater(count(deptid),1)) ~> Aggregate1\nAggregate1 alterRow(deleteIf(1!=1),\n\tinsertIf(1==1)) ~> AlterRow1\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\trecreate:true,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tdeptid,\n\t\tdeptname,\n\t\tcount\n\t)) ~> sink1"
+		}
+	}
+}

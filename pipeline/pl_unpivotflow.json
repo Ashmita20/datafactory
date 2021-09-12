@@ -1,0 +1,68 @@
+{
+	"name": "pl_unpivotflow",
+	"properties": {
+		"activities": [
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Unpivotdataflow",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"source1": {
+								"tableName": "emp_pivot"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Data flow1",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-23.centralindia.logic.azure.com:443/workflows/f66af51c02e94e6c808bd24aee031277/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=rLth7koEg6Qzvs0A4DSPe1VRbQ-Hz7tHhQilD7Oupuk",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": {
+						"value": "{\n\"pipeline\":\"@{pipeline().Pipeline}\",\n\"DataFactoryName\":\"@{pipeline().DataFactory}\",\n\"RunId\":\"@{pipeline().RunId}\",\n\"Error\":\"@{activity('Data flow1').Error.Message}\"\n}",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"annotations": []
+	}
+}

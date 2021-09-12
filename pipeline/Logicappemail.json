@@ -1,0 +1,33 @@
+{
+	"name": "Logicappemail",
+	"properties": {
+		"activities": [
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-23.centralindia.logic.azure.com:443/workflows/f66af51c02e94e6c808bd24aee031277/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=rLth7koEg6Qzvs0A4DSPe1VRbQ-Hz7tHhQilD7Oupuk",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": {
+						"pipeline": "@{pipeline().Pipeline}",
+						"DataFactoryName": "@{pipeline().DataFactory}",
+						"RunId": "@{pipeline().RunId}"
+					}
+				}
+			}
+		],
+		"annotations": []
+	}
+}

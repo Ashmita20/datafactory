@@ -1,0 +1,86 @@
+{
+	"name": "pl_max_modified_date",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get Metadata1",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_trialashmita_raw",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"lastModified",
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "LastModifiedDate",
+					"value": {
+						"value": "@convertToUtc(formatDateTime(activity('Get Metadata1').output.lastModified,'yyyy-MM-ddTHH:mm:ss'),'India Standard Time')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable2",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "FinalDate",
+					"value": {
+						"value": "@convertFromUtc(variables('LastModifiedDate'),'India Standard Time')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"LastModifiedDate": {
+				"type": "String"
+			},
+			"FinalDate": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}

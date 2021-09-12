@@ -1,0 +1,32 @@
+{
+	"name": "Pivotdataflow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_datalake_emp",
+						"type": "DatasetReference"
+					},
+					"name": "empsource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_trial",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Pivot1"
+				}
+			],
+			"script": "source(output(\n\t\temp_id as string,\n\t\tName as string,\n\t\tdepartment as string,\n\t\tcountry as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> empsource\nempsource pivot(groupBy(department),\n\tpivotBy(country),\n\t{count } = count(emp_id),\n\tcolumnNaming: '$N$V',\n\tlateral: false,\n\tpartitionBy('hash', 1)) ~> Pivot1\nPivot1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\trecreate:true,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tpartitionBy('hash', 1)) ~> sink1"
+		}
+	}
+}

@@ -1,5 +1,5 @@
 {
-	"name": "pipeline1",
+	"name": "pl_xls_to_sql",
 	"properties": {
 		"activities": [
 			{
@@ -34,8 +34,8 @@
 				}
 			},
 			{
-				"name": "Copy data1",
-				"type": "Copy",
+				"name": "ForEach1",
+				"type": "ForEach",
 				"dependsOn": [
 					{
 						"activity": "LookupsheetNames",
@@ -44,62 +44,74 @@
 						]
 					}
 				],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
 				"userProperties": [],
 				"typeProperties": {
-					"source": {
-						"type": "ExcelSource",
-						"storeSettings": {
-							"type": "AzureBlobStorageReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": false
-						}
+					"items": {
+						"value": "@activity('LookupsheetNames').output.value",
+						"type": "Expression"
 					},
-					"sink": {
-						"type": "AzureSqlSink",
-						"tableOption": "autoCreate",
-						"disableMetricsCollection": false
-					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"typeConversion": true,
-						"typeConversionSettings": {
-							"allowDataTruncation": true,
-							"treatBooleanAsNumber": false
+					"activities": [
+						{
+							"name": "Copy data1",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "ExcelSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink"
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_load_excel",
+									"type": "DatasetReference",
+									"parameters": {
+										"sheetnames": {
+											"value": "@item().sheetname",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_xlssheet_sink_sql",
+									"type": "DatasetReference",
+									"parameters": {
+										"tableName": {
+											"value": "@item().sheetname",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						}
-					}
-				},
-				"inputs": [
-					{
-						"referenceName": "ds_load_excel",
-						"type": "DatasetReference",
-						"parameters": {
-							"sheetnames": {
-								"value": "@activity('LookupsheetNames').output.sheetname",
-								"type": "Expression"
-							}
-						}
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "ds_xlssheet_sink_sql",
-						"type": "DatasetReference",
-						"parameters": {
-							"tableName": {
-								"value": "@activity('LookupsheetNames').output.sheetname",
-								"type": "Expression"
-							}
-						}
-					}
-				]
+					]
+				}
 			}
 		],
 		"annotations": []

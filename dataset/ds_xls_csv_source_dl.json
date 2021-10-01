@@ -1,0 +1,64 @@
+{
+	"name": "ds_xls_csv_source_dl",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_adls_covidreportingdl",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FileName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().FileName",
+					"type": "Expression"
+				},
+				"fileSystem": "processed"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Armenia",
+				"type": "String"
+			},
+			{
+				"name": "AM",
+				"type": "String"
+			},
+			{
+				"name": "ARM",
+				"type": "String"
+			},
+			{
+				"name": "03",
+				"type": "String"
+			},
+			{
+				"name": "04",
+				"type": "String"
+			},
+			{
+				"name": "2963234",
+				"type": "String"
+			},
+			{
+				"name": "2020-10-15",
+				"type": "String"
+			},
+			{
+				"name": "Epidemic intelligence, national daily data",
+				"type": "String"
+			}
+		]
+	}
+}

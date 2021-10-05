@@ -1,0 +1,54 @@
+{
+	"name": "pipeline1",
+	"properties": {
+		"activities": [
+			{
+				"name": "If Condition1",
+				"type": "IfCondition",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@greaterOrEquals(pipeline().parameters.StartDate,pipeline().parameters.EndDate) ",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Web1",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://prod-29.centralindia.logic.azure.com:443/workflows/54909c89ebef407baef28639dac21aa9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Lva6E94Nqd01VkhW7xz7QlH5QApfCYCsaDs3zEukGBU",
+								"method": "POST",
+								"headers": {
+									"Content-Type": "application/json"
+								},
+								"body": {
+									"value": "{\n\t\"pipelineName\": \"@{pipeline().Pipeline}\",\n\t\"ErrorMessage\": \"End date is smaller than start date\"\n}",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"StartDate": {
+				"type": "string"
+			},
+			"EndDate": {
+				"type": "string"
+			}
+		},
+		"annotations": []
+	}
+}

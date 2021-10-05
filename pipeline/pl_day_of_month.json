@@ -9,7 +9,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@or(equals(formatDateTime(pipeline().parameters.StartDate,'dddd'),'Saturday'),equals(formatDateTime(pipeline().parameters.StartDate,'dddd'),'Sunday'))",
+						"value": "@or(equals(formatDateTime(pipeline().parameters.StartDate,'dddd'),'Saturday'),equals(formatDateTime(pipeline().parameters.StartDate,'dddd'),'Sunday'))\n\n\n",
 						"type": "Expression"
 					},
 					"ifTrueActivities": [

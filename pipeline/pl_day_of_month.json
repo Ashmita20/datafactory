@@ -9,7 +9,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@equals(formatDateTime(pipeline().parameters.StartDate,'dddd'),6)",
+						"value": "@or(equals(formatDateTime(pipeline().parameters.StartDate,'dddd'),'Saturday'),equals(formatDateTime(pipeline().parameters.StartDate,'dddd'),'Sunday'))",
 						"type": "Expression"
 					},
 					"ifTrueActivities": [
@@ -35,19 +35,6 @@
 									}
 								}
 							}
-						},
-						{
-							"name": "Set variable1",
-							"type": "SetVariable",
-							"dependsOn": [],
-							"userProperties": [],
-							"typeProperties": {
-								"variableName": "day",
-								"value": {
-									"value": "@pipeline().parameters.StartDate",
-									"type": "Expression"
-								}
-							}
 						}
 					]
 				}
@@ -56,11 +43,6 @@
 		"parameters": {
 			"StartDate": {
 				"type": "string"
-			}
-		},
-		"variables": {
-			"day": {
-				"type": "String"
 			}
 		},
 		"annotations": []

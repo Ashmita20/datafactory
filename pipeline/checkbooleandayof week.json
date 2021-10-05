@@ -10,7 +10,7 @@
 				"typeProperties": {
 					"variableName": "day",
 					"value": {
-						"value": "@equals(formatDateTime(pipeline().parameters.StartDate,'dddd'),'Saturday')",
+						"value": "@or(equals(formatDateTime(pipeline().parameters.StartDate,'dddd'),'Saturday'),equals(formatDateTime(pipeline().parameters.StartDate,'dddd'),'Sunday'))",
 						"type": "Expression"
 					}
 				}
@@ -19,7 +19,7 @@
 		"parameters": {
 			"StartDate": {
 				"type": "string",
-				"defaultValue": "2021/10/02"
+				"defaultValue": "2021/10/03"
 			}
 		},
 		"variables": {

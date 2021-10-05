@@ -1,5 +1,5 @@
 {
-	"name": "pipeline1",
+	"name": "checkbooleandayof week",
 	"properties": {
 		"activities": [
 			{
@@ -10,15 +10,21 @@
 				"typeProperties": {
 					"variableName": "day",
 					"value": {
-						"value": "formatDateTime(pipeline().parameters.StartDate,'dddd')",
+						"value": "@equals(formatDateTime(pipeline().parameters.StartDate,'dddd'),'Saturday')",
 						"type": "Expression"
 					}
 				}
 			}
 		],
+		"parameters": {
+			"StartDate": {
+				"type": "string",
+				"defaultValue": "2021/10/02"
+			}
+		},
 		"variables": {
 			"day": {
-				"type": "String"
+				"type": "Boolean"
 			}
 		},
 		"annotations": []

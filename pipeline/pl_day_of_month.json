@@ -9,17 +9,44 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@formatDateTime(pipeline().parameters.StartDate,'ddd')",
+						"value": "@equals(formatDateTime(pipeline().parameters.StartDate,'dddd'),6)",
 						"type": "Expression"
 					},
 					"ifTrueActivities": [
 						{
-							"name": "Wait1",
-							"type": "Wait",
+							"name": "Execute Pipeline1",
+							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
-								"waitTimeInSeconds": 1
+								"pipeline": {
+									"referenceName": "pl_start_end_condition",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"StartDate": {
+										"value": "@pipeline().parameters.StartDate",
+										"type": "Expression"
+									},
+									"EndDate": {
+										"value": "2021/10/01",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "Set variable1",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "day",
+								"value": {
+									"value": "@pipeline().parameters.StartDate",
+									"type": "Expression"
+								}
 							}
 						}
 					]
@@ -29,6 +56,11 @@
 		"parameters": {
 			"StartDate": {
 				"type": "string"
+			}
+		},
+		"variables": {
+			"day": {
+				"type": "String"
 			}
 		},
 		"annotations": []

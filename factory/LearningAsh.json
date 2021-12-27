@@ -1,0 +1,9 @@
+{
+	"name": "LearningAsh",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "c61d428b-6b2b-4741-81b7-a45e1893d5ff",
+		"tenantId": "4e700317-adae-4379-9226-883ce726d7a6"
+	}
+}
